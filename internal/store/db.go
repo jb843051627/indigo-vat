@@ -71,6 +71,5 @@ func (d *DB) Query(ctx context.Context, query string, args ...any) (*sql.Rows, e
 	return d.sql.QueryContext(ctx, query, args...)
 }
 func (d *DB) QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
-	d.mu.RLock()
 	return d.sql.QueryRowContext(ctx, query, args...)
 }
