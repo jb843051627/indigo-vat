@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/jb843051627/indigo-vat/internal/model"
 	"github.com/jb843051627/indigo-vat/internal/validation"
 	"time"
