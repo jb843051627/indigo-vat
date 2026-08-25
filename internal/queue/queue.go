@@ -34,6 +34,8 @@ func (q *Queue) Submit(ctx context.Context, job Job) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
+	case <-q.done:
+		return ErrClosed
 	case q.jobs <- job:
 		return nil
 	}
@@ -53,6 +55,8 @@ func (q *Queue) worker(ctx context.Context, handle func(context.Context, Job) er
 		select {
 		case <-ctx.Done():
 			return
+		case <-q.done:
+			return
 		case job, ok := <-q.jobs:
 			if !ok {
 				return
@@ -66,9 +70,8 @@ func (q *Queue) Close() {
 		q.mu.Lock()
 		q.closed = true
 		q.mu.Unlock()
-		close(q.jobs)
-		q.wg.Wait()
 		close(q.done)
+		q.wg.Wait()
 	})
 }
 func (q *Queue) Done() <-chan struct{} { return q.done }
