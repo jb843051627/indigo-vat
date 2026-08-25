@@ -13,7 +13,8 @@ func WriteSamples(w io.Writer, samples []model.Sample, locationName string) erro
 		return err
 	}
 	location := Location(locationName)
-	for _, sample := range samples {
+	snapshot := append([]model.Sample(nil), samples...)
+	for _, sample := range snapshot {
 		if err := writer.Write([]string{sample.ID, Format(sample.TakenAt, location), strconv.FormatFloat(sample.Hue, 'f', 2, 64), strconv.FormatFloat(sample.PH, 'f', 2, 64), strconv.FormatFloat(sample.Temperature, 'f', 2, 64), sample.Status, sample.Observer}); err != nil {
 			return err
 		}
