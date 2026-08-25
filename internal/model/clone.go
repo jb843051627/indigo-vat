@@ -9,16 +9,21 @@ func CloneAudit(value AuditEvent) AuditEvent      { return value }
 
 func CloneRecipe(value Recipe) Recipe {
 	out := value
-	out.Stages = append([]RecipeStage(nil), value.Stages...)
+	out.Stages = make([]RecipeStage, len(value.Stages))
+	copy(out.Stages, value.Stages)
 	return out
 }
 
 func CloneReport(value ReleaseReport) ReleaseReport {
 	out := value
 	out.Recipe = CloneRecipe(value.Recipe)
-	out.Samples = append([]Sample(nil), value.Samples...)
-	out.Inspections = append([]Inspection(nil), value.Inspections...)
-	out.Alerts = append([]Alert(nil), value.Alerts...)
-	out.Audit = append([]AuditEvent(nil), value.Audit...)
+	out.Samples = make([]Sample, len(value.Samples))
+	copy(out.Samples, value.Samples)
+	out.Inspections = make([]Inspection, len(value.Inspections))
+	copy(out.Inspections, value.Inspections)
+	out.Alerts = make([]Alert, len(value.Alerts))
+	copy(out.Alerts, value.Alerts)
+	out.Audit = make([]AuditEvent, len(value.Audit))
+	copy(out.Audit, value.Audit)
 	return out
 }
