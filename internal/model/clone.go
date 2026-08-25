@@ -14,11 +14,16 @@ func CloneRecipe(value Recipe) Recipe {
 	return out
 }
 
+func cloneSamples(value []Sample) []Sample {
+	out := make([]Sample, len(value))
+	copy(out, value)
+	return out
+}
+
 func CloneReport(value ReleaseReport) ReleaseReport {
 	out := value
 	out.Recipe = CloneRecipe(value.Recipe)
-	out.Samples = make([]Sample, len(value.Samples))
-	copy(out.Samples, value.Samples)
+	out.Samples = cloneSamples(value.Samples)
 	out.Inspections = make([]Inspection, len(value.Inspections))
 	copy(out.Inspections, value.Inspections)
 	out.Alerts = make([]Alert, len(value.Alerts))
