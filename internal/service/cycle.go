@@ -46,7 +46,7 @@ func (s *Service) AdvanceCycle(ctx context.Context, id, next string, revision in
 		return model.Cycle{}, err
 	}
 	if c.Revision != revision || !model.CanTransition(c.State, next) {
-		return model.Cycle{}, fmt.Errorf("%w: transition", ErrConflict)
+		return model.Cycle{}, conflictError("transition")
 	}
 	now := s.clock.Now()
 	matured, released := c.MaturedAt, c.ReleasedAt

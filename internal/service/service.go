@@ -49,10 +49,24 @@ func (s *Service) Start(ctx context.Context) {
 		return nil
 	})
 }
-func (s *Service) Close()                    { s.queue.Close() }
-func (s *Service) DB() *store.DB             { return s.db }
-func (s *Service) Metrics() map[string]int64 { return s.metrics.Snapshot() }
-func (s *Service) nowText() string           { return s.clock.Now().UTC().Format(time.RFC3339Nano) }
+func (s *Service) Close() {
+	s.startMu.Lock()
+	started := s.started
+	s.startMu.Unlock()
+	if !started {
+		return
+	}
+	s.queue.Close()
+}
+func (s *Service) DB() *store.DB { return s.db }
+func (s *Service) Metrics() map[string]int64 {
+	snapshot := s.metrics.Snapshot()
+	if snapshot == nil {
+		return map[string]int64{}
+	}
+	return snapshot
+}
+func (s *Service) nowText() string { return s.clock.Now().UTC().Format(time.RFC3339Nano) }
 func audit(typ, id, action, detail string, now time.Time) model.AuditEvent {
 	return model.AuditEvent{ID: validation.NewID("audit"), EntityType: typ, EntityID: id, Action: action, Detail: detail, CreatedAt: now}
 }
@@ -68,3 +82,9 @@ func ensureID(id string) error {
 	}
 	return nil
 }
+
+func checkContext(ctx context.Context) error { return ctx.Err() }
+
+func conflictError(detail string) error { return fmt.Errorf("%w: %s", ErrConflict, detail) }
+
+func wrapSampleValidation(err error) error { return fmt.Errorf("%w: sample validation", err) }

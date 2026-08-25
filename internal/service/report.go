@@ -7,10 +7,14 @@ import (
 )
 
 func (s *Service) BuildReport(ctx context.Context, id string) (model.ReleaseReport, error) {
+	if err := ctx.Err(); err != nil {
+		return model.ReleaseReport{}, err
+	}
 	report, err := s.db.Report(ctx, id)
 	if err != nil {
 		return model.ReleaseReport{}, err
 	}
+	report = model.CloneReport(report)
 	passing := 0
 	for _, item := range report.Inspections {
 		if item.Result == model.InspectionPass {
@@ -33,6 +37,9 @@ func (s *Service) ReleaseCycle(ctx context.Context, id string, revision int) (mo
 	report, err := s.BuildReport(ctx, id)
 	if err != nil {
 		return model.Cycle{}, err
+	}
+	if report.Cycle.State != model.CycleMatured {
+		return model.Cycle{}, ErrNotReady
 	}
 	if !report.Ready {
 		return model.Cycle{}, ErrNotReady

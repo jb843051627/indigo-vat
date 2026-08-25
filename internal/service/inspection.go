@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/jb843051627/indigo-vat/internal/model"
 	"github.com/jb843051627/indigo-vat/internal/validation"
 )
@@ -35,7 +36,7 @@ func (s *Service) CompleteInspection(ctx context.Context, id string) (model.Insp
 			return item, nil
 		}
 	}
-	return model.Inspection{}, ErrNotFound
+	return model.Inspection{}, fmt.Errorf("%w: inspection %s", ErrNotFound, id)
 }
 func (s *Service) ListInspections(ctx context.Context, cycleID string) ([]model.Inspection, error) {
 	return s.db.ListInspections(ctx, cycleID)

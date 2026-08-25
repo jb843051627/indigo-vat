@@ -9,7 +9,7 @@ import (
 
 func (s *Service) RecordSample(ctx context.Context, in model.SampleInput) (model.Sample, error) {
 	if err := validation.ValidateSample(in); err != nil {
-		return model.Sample{}, err
+		return model.Sample{}, wrapSampleValidation(err)
 	}
 	cycle, err := s.GetCycle(ctx, in.CycleID)
 	if err != nil {
@@ -26,6 +26,9 @@ func (s *Service) RecordSample(ctx context.Context, in model.SampleInput) (model
 	return sample, nil
 }
 func (s *Service) ListSamples(ctx context.Context, cycleID string) ([]model.Sample, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	return s.db.ListSamples(ctx, cycleID)
 }
 func (s *Service) AcceptSample(ctx context.Context, id string) (model.Sample, error) {
@@ -45,5 +48,8 @@ func (s *Service) RejectSample(ctx context.Context, id string) (model.Sample, er
 		return model.Sample{}, err
 	}
 	sample.Status = model.SampleRejected
-	return sample, s.db.SetSampleStatus(ctx, id, sample.Status)
+	if err := s.db.SetSampleStatus(ctx, id, sample.Status); err != nil {
+		return model.Sample{}, err
+	}
+	return sample, nil
 }

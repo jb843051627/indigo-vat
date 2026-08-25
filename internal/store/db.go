@@ -50,6 +50,9 @@ func (d *DB) Path() string { return d.path }
 func (d *DB) WithTx(ctx context.Context, fn func(*sql.Tx) error) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	tx, err := d.sql.BeginTx(ctx, nil)
 	if err != nil {
 		return err

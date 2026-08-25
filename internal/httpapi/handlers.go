@@ -50,6 +50,7 @@ func (s *Server) createCycle(w http.ResponseWriter, r *http.Request) {
 func (s *Server) report(w http.ResponseWriter, r *http.Request) {
 	item, err := s.service.BuildReport(r.Context(), r.PathValue("id"))
 	if err != nil {
+		w.Header().Set("Cache-Control", "no-store")
 		writeJSON(w, 404, map[string]string{"error": err.Error()})
 		return
 	}

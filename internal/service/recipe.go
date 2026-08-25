@@ -45,6 +45,9 @@ func (s *Service) AddStage(ctx context.Context, id string, in model.StageInput) 
 	return stage, nil
 }
 func (s *Service) PublishRecipe(ctx context.Context, id string) (model.Recipe, error) {
+	if err := checkContext(ctx); err != nil {
+		return model.Recipe{}, err
+	}
 	r, err := s.GetRecipe(ctx, id)
 	if err != nil {
 		return model.Recipe{}, err
