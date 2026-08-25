@@ -10,7 +10,14 @@ func (d *DB) PutAlert(ctx context.Context, a model.Alert) error {
 	return err
 }
 func (d *DB) ListAlerts(ctx context.Context, cycleID string) ([]model.Alert, error) {
-	rows, err := d.Query(ctx, `SELECT id,cycle_id,level,code,message,state,created_at,acknowledged_at FROM alerts WHERE cycle_id=? ORDER BY created_at`, cycleID)
+	query := `SELECT id,cycle_id,level,code,message,state,created_at,acknowledged_at FROM alerts`
+	args := []any{}
+	if cycleID != "" {
+		query += ` WHERE cycle_id=?`
+		args = append(args, cycleID)
+	}
+	query += ` ORDER BY created_at`
+	rows, err := d.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

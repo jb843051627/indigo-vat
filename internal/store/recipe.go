@@ -41,6 +41,30 @@ func (d *DB) GetRecipe(ctx context.Context, id string) (model.Recipe, error) {
 	}
 	return r, rows.Err()
 }
+
+func (d *DB) ListRecipes(ctx context.Context) ([]model.Recipe, error) {
+	rows, err := d.Query(ctx, `SELECT id,name,target_hue,hue_tolerance,min_minutes,max_minutes,state,created_at,updated_at FROM recipes ORDER BY name`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	result := make([]model.Recipe, 0)
+	for rows.Next() {
+		var r model.Recipe
+		var created, updated string
+		if err := rows.Scan(&r.ID, &r.Name, &r.TargetHue, &r.HueTolerance, &r.MinMinutes, &r.MaxMinutes, &r.State, &created, &updated); err != nil {
+			return nil, err
+		}
+		r.CreatedAt, r.UpdatedAt = Time(created), Time(updated)
+		stages, err := d.GetRecipe(ctx, r.ID)
+		if err != nil {
+			return nil, err
+		}
+		r.Stages = stages.Stages
+		result = append(result, r)
+	}
+	return result, rows.Err()
+}
 func (d *DB) SetRecipeState(ctx context.Context, id, state, when string) error {
 	result, err := d.Exec(ctx, `UPDATE recipes SET state=?,updated_at=? WHERE id=?`, state, when, id)
 	if err != nil {

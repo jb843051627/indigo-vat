@@ -10,7 +10,14 @@ func (d *DB) PutInspection(ctx context.Context, i model.Inspection) error {
 	return err
 }
 func (d *DB) ListInspections(ctx context.Context, cycleID string) ([]model.Inspection, error) {
-	rows, err := d.Query(ctx, `SELECT id,cycle_id,kind,result,score,inspector,created_at,completed_at,note FROM inspections WHERE cycle_id=? ORDER BY created_at`, cycleID)
+	query := `SELECT id,cycle_id,kind,result,score,inspector,created_at,completed_at,note FROM inspections`
+	args := []any{}
+	if cycleID != "" {
+		query += ` WHERE cycle_id=?`
+		args = append(args, cycleID)
+	}
+	query += ` ORDER BY created_at`
+	rows, err := d.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

@@ -59,4 +59,6 @@ func (s *Service) PublishRecipe(ctx context.Context, id string) (model.Recipe, e
 	r.State = model.RecipeReady
 	return r, nil
 }
-func (s *Service) ListRecipes(ctx context.Context) ([]model.Recipe, error) { return nil, nil }
+func (s *Service) ListRecipes(ctx context.Context) ([]model.Recipe, error) {
+	return s.db.ListRecipes(ctx)
+}
