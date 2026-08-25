@@ -15,6 +15,7 @@ func (s *Service) BuildReport(ctx context.Context, id string) (model.ReleaseRepo
 		return model.ReleaseReport{}, err
 	}
 	report = model.CloneReport(report)
+	report.Samples = copySamples(report.Samples)
 	passing := 0
 	for _, item := range report.Inspections {
 		if item.Result == model.InspectionPass {
@@ -55,4 +56,10 @@ func (s *Service) QueueInspection(ctx context.Context, id string, job func(conte
 		return validation.ErrInvalidInput
 	}
 	return s.queue.Submit(ctx, job)
+}
+
+func copySamples(values []model.Sample) []model.Sample {
+	out := make([]model.Sample, len(values))
+	copy(out, values)
+	return out
 }
