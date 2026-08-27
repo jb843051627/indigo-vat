@@ -40,7 +40,7 @@ func CanTransition(from, to string) bool {
 	case CycleHeld:
 		return to == CycleFermenting || to == CycleMatured || to == CycleDiscarded
 	case CycleReleased:
-		return to == CycleFermenting
+		return false
 	case CycleDiscarded:
 		return false
 	default:
