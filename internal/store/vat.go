@@ -2,7 +2,7 @@ package store
 
 import (
 	"context"
-	"errors"
+	"database/sql"
 	"github.com/jb843051627/indigo-vat/internal/model"
 )
 
@@ -44,7 +44,7 @@ func (d *DB) SetVatState(ctx context.Context, id, state, when string) error {
 	}
 	n, _ := result.RowsAffected()
 	if n == 0 {
-		return errors.New("vat missing")
+		return sql.ErrNoRows
 	}
 	return nil
 }
