@@ -69,8 +69,10 @@ func (q *Queue) Close() {
 	q.mu.Lock()
 	q.closed = true
 	q.mu.Unlock()
-	close(q.jobs)
-	q.wg.Wait()
-	close(q.done)
+	q.once.Do(func() {
+		close(q.jobs)
+		q.wg.Wait()
+		close(q.done)
+	})
 }
 func (q *Queue) Done() <-chan struct{} { return q.done }
