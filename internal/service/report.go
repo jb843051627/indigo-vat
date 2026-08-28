@@ -23,6 +23,11 @@ func (s *Service) BuildReport(ctx context.Context, id string) (model.ReleaseRepo
 		}
 	}
 	open := 0
+	for _, item := range report.Alerts {
+		if item.State == model.AlertOpen {
+			open++
+		}
+	}
 	report.Ready = model.Releaseable(report.Cycle.State, passing, open)
 	if !report.Ready {
 		report.Reason = "quality requirements are incomplete"
