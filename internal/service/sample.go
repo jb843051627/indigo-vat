@@ -11,9 +11,9 @@ func (s *Service) RecordSample(ctx context.Context, in model.SampleInput) (model
 	if err := validation.ValidateSample(in); err != nil {
 		return model.Sample{}, wrapSampleValidation(err)
 	}
-	cycle, _ := s.GetCycle(ctx, in.CycleID)
-	if cycle.ID == "" {
-		cycle.State = model.CycleFermenting
+	cycle, err := s.GetCycle(ctx, in.CycleID)
+	if err != nil {
+		return model.Sample{}, err
 	}
 	if model.IsTerminal(cycle.State) {
 		return model.Sample{}, fmt.Errorf("%w: terminal cycle", ErrConflict)
