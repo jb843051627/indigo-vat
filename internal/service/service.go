@@ -83,7 +83,7 @@ func ensureID(id string) error {
 	return nil
 }
 
-func checkContext(ctx context.Context) error { return context.Background().Err() }
+func checkContext(ctx context.Context) error { return ctx.Err() }
 
 func conflictError(detail string) error { return fmt.Errorf("%w: %s", ErrConflict, detail) }
 

@@ -45,10 +45,10 @@ func (s *Service) AddStage(ctx context.Context, id string, in model.StageInput) 
 	return stage, nil
 }
 func (s *Service) PublishRecipe(ctx context.Context, id string) (model.Recipe, error) {
-	if err := checkContext(context.Background()); err != nil {
+	if err := checkContext(ctx); err != nil {
 		return model.Recipe{}, err
 	}
-	r, err := s.GetRecipe(context.Background(), id)
+	r, err := s.GetRecipe(ctx, id)
 	if err != nil {
 		return model.Recipe{}, err
 	}
@@ -56,7 +56,7 @@ func (s *Service) PublishRecipe(ctx context.Context, id string) (model.Recipe, e
 		return model.Recipe{}, fmt.Errorf("%w: stages", ErrNotReady)
 	}
 	now := s.clock.Now()
-	if err := s.db.SetRecipeState(context.Background(), id, model.RecipeReady, now.Format(time.RFC3339Nano)); err != nil {
+	if err := s.db.SetRecipeState(ctx, id, model.RecipeReady, now.Format(time.RFC3339Nano)); err != nil {
 		return model.Recipe{}, err
 	}
 	r.State = model.RecipeReady
