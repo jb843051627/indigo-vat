@@ -1,7 +1,9 @@
 package httpapi
 
 import (
+	"errors"
 	"github.com/jb843051627/indigo-vat/internal/model"
+	"github.com/jb843051627/indigo-vat/internal/service"
 	"net/http"
 )
 
@@ -42,6 +44,10 @@ func (s *Server) createCycle(w http.ResponseWriter, r *http.Request) {
 	}
 	item, err := s.service.StartCycle(r.Context(), in)
 	if err != nil {
+		if errors.Is(err, service.ErrVatNotActive) {
+			writeJSON(w, 409, map[string]string{"error": err.Error(), "code": "vat_not_active"})
+			return
+		}
 		writeJSON(w, 422, map[string]string{"error": err.Error()})
 		return
 	}

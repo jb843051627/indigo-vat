@@ -18,6 +18,7 @@ import (
 var ErrNotFound = errors.New("entity not found")
 var ErrConflict = errors.New("state conflict")
 var ErrNotReady = errors.New("entity not ready")
+var ErrVatNotActive = errors.New("vat not active")
 
 type Service struct {
 	db      *store.DB

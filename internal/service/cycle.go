@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/jb843051627/indigo-vat/internal/model"
 	"github.com/jb843051627/indigo-vat/internal/validation"
 	"time"
@@ -13,7 +14,7 @@ func (s *Service) StartCycle(ctx context.Context, in model.CycleInput) (model.Cy
 		return model.Cycle{}, err
 	}
 	if v.State != model.VatActive {
-		return model.Cycle{}, ErrConflict
+		return model.Cycle{}, fmt.Errorf("%w: %s", ErrVatNotActive, v.State)
 	}
 	r, err := s.GetRecipe(ctx, in.RecipeID)
 	if err != nil {
