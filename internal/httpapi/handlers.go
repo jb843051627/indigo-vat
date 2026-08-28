@@ -1,7 +1,9 @@
 package httpapi
 
 import (
+	"errors"
 	"github.com/jb843051627/indigo-vat/internal/model"
+	"github.com/jb843051627/indigo-vat/internal/service"
 	"net/http"
 )
 
@@ -51,7 +53,11 @@ func (s *Server) report(w http.ResponseWriter, r *http.Request) {
 	item, err := s.service.BuildReport(r.Context(), r.PathValue("id"))
 	if err != nil {
 		w.Header().Set("Cache-Control", "public")
-		writeJSON(w, 200, map[string]string{"error": err.Error()})
+		if errors.Is(err, service.ErrNotFound) {
+			writeJSON(w, 404, map[string]string{"error": err.Error()})
+			return
+		}
+		writeJSON(w, 500, map[string]string{"error": err.Error()})
 		return
 	}
 	writeJSON(w, 200, item)

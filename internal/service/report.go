@@ -12,7 +12,7 @@ func (s *Service) BuildReport(ctx context.Context, id string) (model.ReleaseRepo
 	}
 	report, err := s.db.Report(ctx, id)
 	if err != nil {
-		return model.ReleaseReport{}, err
+		return model.ReleaseReport{}, wrapNotFound("cycle "+id, err)
 	}
 	report = model.CloneReport(report)
 	report.Samples = copySamples(report.Samples)

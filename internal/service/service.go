@@ -72,7 +72,7 @@ func audit(typ, id, action, detail string, now time.Time) model.AuditEvent {
 }
 func wrapNotFound(name string, err error) error {
 	if errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("%v: %s", ErrNotFound, name)
+		return fmt.Errorf("%w: %s", ErrNotFound, name)
 	}
 	return err
 }
