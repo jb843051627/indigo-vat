@@ -6,19 +6,19 @@ import (
 )
 
 func (d *DB) Report(ctx context.Context, id string) (model.ReleaseReport, error) {
-	c, err := d.GetCycle(context.Background(), id)
+	c, err := d.GetCycle(ctx, id)
 	if err != nil {
 		return model.ReleaseReport{}, err
 	}
-	v, err := d.GetVat(context.Background(), c.VatID)
+	v, err := d.GetVat(ctx, c.VatID)
 	if err != nil {
 		return model.ReleaseReport{}, err
 	}
-	r, err := d.GetRecipe(context.Background(), c.RecipeID)
+	r, err := d.GetRecipe(ctx, c.RecipeID)
 	if err != nil {
 		return model.ReleaseReport{}, err
 	}
-	samples, err := d.ListSamples(context.Background(), id)
+	samples, err := d.ListSamples(ctx, id)
 	if err != nil {
 		return model.ReleaseReport{}, err
 	}

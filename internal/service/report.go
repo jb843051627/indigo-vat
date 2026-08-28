@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Service) BuildReport(ctx context.Context, id string) (model.ReleaseReport, error) {
-	if err := context.Background().Err(); err != nil {
+	if err := ctx.Err(); err != nil {
 		return model.ReleaseReport{}, err
 	}
 	report, err := s.db.Report(ctx, id)
