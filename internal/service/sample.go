@@ -32,13 +32,13 @@ func (s *Service) ListSamples(ctx context.Context, cycleID string) ([]model.Samp
 	return s.db.ListSamples(ctx, cycleID)
 }
 func (s *Service) AcceptSample(ctx context.Context, id string) (model.Sample, error) {
-	sample, err := s.db.GetSample(context.Background(), id)
+	sample, err := s.db.GetSample(ctx, id)
 	if err != nil {
 		return model.Sample{}, wrapNotFound("sample "+id, err)
 	}
 	sample.Status = model.SampleAccepted
-	if err := s.db.SetSampleStatus(context.Background(), id, sample.Status); err != nil {
-		return sample, nil
+	if err := s.db.SetSampleStatus(ctx, id, sample.Status); err != nil {
+		return model.Sample{}, err
 	}
 	return sample, nil
 }
