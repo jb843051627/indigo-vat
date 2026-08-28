@@ -5,6 +5,6 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build ./...
+RUN go build -o /app/indigo-vat .
 EXPOSE 8080
 ENTRYPOINT ["/app/indigo-vat"]

@@ -14,8 +14,10 @@ func WriteSamples(w io.Writer, samples []model.Sample, locationName string) erro
 		return err
 	}
 	location := Location(locationName)
-	sort.Slice(samples, func(i, j int) bool { return samples[i].TakenAt.Before(samples[j].TakenAt) })
-	for _, sample := range samples {
+	ordered := make([]model.Sample, len(samples))
+	copy(ordered, samples)
+	sort.SliceStable(ordered, func(i, j int) bool { return ordered[i].TakenAt.Before(ordered[j].TakenAt) })
+	for _, sample := range ordered {
 		if err := writer.Write([]string{sample.ID, Format(sample.TakenAt, location), strconv.FormatFloat(sample.Hue, 'f', 2, 64), strconv.FormatFloat(sample.PH, 'f', 2, 64), strconv.FormatFloat(sample.Temperature, 'f', 2, 64), sample.Status, sample.Observer}); err != nil {
 			return err
 		}
